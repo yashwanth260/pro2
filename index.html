@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood DJ Pro</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f0c29">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="card" id="mainCard">
+        <h1 id="appTitle">Mood DJ Pro</h1>
+
+        <div id="modeSelection" class="mode-grid">
+            <div class="mode-card" onclick="switchMode('ai')">
+                <span class="icon">📸</span>
+                <h3>AI Photo Match</h3>
+                <p>Upload a photo for AI selection</p>
+            </div>
+            <div class="mode-card" onclick="switchMode('manual')">
+                <span class="icon">🎨</span>
+                <h3>Manual Vibe</h3>
+                <p>Pick Era, Mood & Language</p>
+            </div>
+        </div>
+
+        <div id="commonInputs" style="display:none;">
+            <div class="selection-row">
+                <label>Select Language</label>
+                <select id="langSelect">
+                    <option value="English">English</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Kannada">Kannada</option>
+                    <option value="Telugu">Telugu</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="aiSection" style="display:none;">
+            <div class="upload-area">
+                <label for="imageInput" class="file-label">Upload Picture 📷</label>
+                <input type="file" id="imageInput" accept="image/*">
+            </div>
+        </div>
+
+        <div id="manualSection" style="display:none;">
+            <div class="selection-row">
+                <label>Select Era</label>
+                <select id="eraSelect">
+                    <option value="20s">2000s - Present</option>
+                    <option value="90s">90s Gold</option>
+                </select>
+            </div>
+            <div class="button-group">
+                <button onclick="getManualSong('Chill')" class="btn-chill">🌊 Chill</button>
+                <button onclick="getManualSong('Romantic')" class="btn-romantic">💖 Romantic</button>
+                <button onclick="getManualSong('Melody')" class="btn-melody">🎶 Melody</button>
+                <button onclick="getManualSong('Broken')" class="btn-broken">💔 Broken</button>
+            </div>
+        </div>
+
+        <div id="result-box" style="display:none;">
+            <div id="loader" class="spinner" style="display:none;"></div>
+            <img id="imagePreview" src="" style="display:none;">
+            <div id="aiFeedback" class="tags"></div>
+            <p id="song-display">Analyzing your vibe...</p>
+            <a id="search-link" href="#" target="_blank">LISTEN ON YOUTUBE</a>
+            <button class="back-btn" onclick="resetApp()">← Switch Mode</button>
+        </div>
+
+        <button id="installBtn" style="display:none; margin-top: 20px;" class="install-btn">Install App 📲</button>
+    </div>
+
+    <script src="file.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installBtn').style.display = 'inline-block';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => {
+                    document.getElementById('installBtn').style.display = 'none';
+                    deferredPrompt = null;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
